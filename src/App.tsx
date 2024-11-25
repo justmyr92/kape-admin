@@ -18,7 +18,7 @@ function App() {
         <BrowserRouter>
             <Routes>
                 {/* Redirect from / to /home */}
-                <Route path="/" element={<Navigate to="/home" />} />
+                <Route path="/" element={<Navigate to="/admin/login" />} />
 
                 {/* Other routes */}
                 <Route element={<HomePage />} path="/home" />
