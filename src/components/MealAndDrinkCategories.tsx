@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 // Each product in a category
 interface Product {

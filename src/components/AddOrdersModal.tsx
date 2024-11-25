@@ -28,7 +28,6 @@ const AddOrdersModal = ({
         fetchProducts();
     }, []);
 
-    const [showM, setshowM] = useState(false);
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -48,12 +47,6 @@ const AddOrdersModal = ({
         // Reset the file input
         e.target.value = "";
     };
-
-    function convertExcelDate(serial: any) {
-        const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // Excel epoch
-        const date = new Date(excelEpoch.getTime() + serial * 86400000); // Add days in milliseconds
-        return date.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-    }
 
     const transformDataToOrderFormat = (rawData: any[]): any[] => {
         const ordersMap: { [key: string]: any } = {};

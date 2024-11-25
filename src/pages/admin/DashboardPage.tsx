@@ -489,7 +489,7 @@ const DashboardPage = () => {
                         <h2 className="text-xl mb-4 text-center">
                             Monthly Sales
                         </h2>
-                        <SalesLineChart />
+                        <SalesLineChart orders={orders} />
                     </div>
                 </div>
                 <div className="flex">

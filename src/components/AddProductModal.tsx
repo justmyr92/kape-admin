@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { addCategory, addProduct } from "../services/products.service";
+import { addProduct } from "../services/products.service";
 
 interface AddProductModalProps {
     showAddModal: boolean;
@@ -53,10 +53,6 @@ const AddProductModal = ({
         e.preventDefault();
 
         let categoryId = selectedCategory;
-        if (selectedCategory === "others") {
-            // Get the new category ID by calling addCategory
-            categoryId = await addCategory(categoryName);
-        }
 
         if (!productImage) {
             console.error("Product image is required.");
@@ -187,7 +183,6 @@ const AddProductModal = ({
                                     {category.category_name}
                                 </option>
                             ))}
-                            <option value="others">Others</option>
                         </select>
                     </label>
                     {selectedCategory === "others" && (
