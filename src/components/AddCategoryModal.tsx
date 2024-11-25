@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import { addCategory } from "../services/products.service";
 
 interface AddCategoryModalProps {
@@ -13,12 +14,14 @@ const AddCategoryModal = ({
     setReload,
 }: AddCategoryModalProps) => {
     const [categoryName, setCategoryName] = useState("");
+    const [categoryImage, setCategoryImage] = useState<File | null>(null);
     const [error, setError] = useState("");
 
     // Reset form fields function
     const resetForm = () => {
-        setCategoryName(""); // Reset category name field
-        setError(""); // Reset error state
+        setCategoryName("");
+        setCategoryImage(null);
+        setError("");
     };
 
     // Modal control logic
@@ -36,6 +39,11 @@ const AddCategoryModal = ({
         }
     }, [showAddModal]);
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) setCategoryImage(file);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -44,13 +52,31 @@ const AddCategoryModal = ({
             return;
         }
 
+        if (!categoryImage) {
+            setError("Category image is required.");
+            return;
+        }
+
         try {
-            await addCategory(categoryName);
+            await addCategory(categoryName, categoryImage);
             setReload(true);
             setShowAddModal(false);
+
+            // SweetAlert success notification
+            Swal.fire({
+                title: "Success!",
+                text: "Category has been successfully added.",
+                icon: "success",
+            });
         } catch (error) {
             console.error("Error adding category:", error);
-            setError("Failed to add category. Please try again.");
+
+            // SweetAlert error notification
+            Swal.fire({
+                title: "Error!",
+                text: "Failed to add category. Please try again.",
+                icon: "error",
+            });
         }
     };
 
@@ -79,6 +105,18 @@ const AddCategoryModal = ({
                             className="input input-bordered w-full rounded-md"
                             value={categoryName}
                             onChange={(e) => setCategoryName(e.target.value)}
+                            required
+                        />
+                    </label>
+                    <label className="form-control w-full mb-2">
+                        <div className="label">
+                            <span className="label-text">Category Image</span>
+                        </div>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="input input-bordered w-full rounded-md"
+                            onChange={handleImageChange}
                             required
                         />
                     </label>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { addOrder } from "../services/orders.service";
 import { getProductsWithCategories } from "../services/products.service";
+import Swal from "sweetalert2";
 
 interface AddOrderModalProps {
     showAddModal: boolean;
@@ -27,6 +28,7 @@ const AddOrdersModal = ({
         fetchProducts();
     }, []);
 
+    const [showM, setshowM] = useState(false);
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -63,7 +65,7 @@ const AddOrdersModal = ({
             if (!ordersMap[transactionNumber]) {
                 ordersMap[transactionNumber] = {
                     transaction_number: transactionNumber,
-                    order_date: convertExcelDate(row["Order Date"]), // Ensure the key matches your data
+                    order_date: row["Order Date"], // Ensure the key matches your data
                     order_type: row["Order Type"],
                     orderlist: [],
                     total: 0, // Initialize total for each transaction
@@ -71,15 +73,15 @@ const AddOrdersModal = ({
             }
 
             // Create order list item and add it to orderlist
+            console.log(row["Product"]);
+
             const orderItem = {
                 category: row["Category"],
                 product_name: row["Product"],
                 //pget product id if name is match
-                product_id:
-                    products.find(
-                        (product: any) =>
-                            product.product_name === row["Product"]
-                    )?.product_id ?? 1,
+                product_id: products.find(
+                    (product: any) => product.product_name === row["Product"]
+                )?.product_id,
 
                 quantity: row["Quantity"],
                 price: row["Price"],
@@ -97,26 +99,74 @@ const AddOrdersModal = ({
         return Object.values(ordersMap);
     };
 
-    const handleConfirmUpload = async () => {
-        console.log(orders, products);
-        try {
-            const responses = await Promise.all(
-                orders.map((order: any) => addOrder(order)) // Call addOrder for each order in parallel
-            );
+    // const handleConfirmUpload = async () => {
+    //     console.log(orders, products);
+    //     try {
+    //         const responses = await Promise.all(
+    //             orders.map((order: any) => addOrder(order)) // Call addOrder for each order in parallel
+    //         );
 
-            if (responses.every((response) => response)) {
-                // Check if all responses are successful
-                setReload(true);
-                setShowAddModal(false);
+    //         if (responses.every((response) => response)) {
+    //             // Check if all responses are successful
+    //             setReload(true);
+    //             setShowAddModal(false);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error uploading orders:", error);
+    //     }
+    // };
+
+    const handleConfirmUpload = async () => {
+        try {
+            // Confirmation dialog
+            const result = await Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to upload these orders?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Yes, upload!",
+                cancelButtonText: "Cancel",
+            });
+
+            if (result.isConfirmed) {
+                console.log(orders, products, "Asda22222sd");
+
+                const responses = await Promise.all(
+                    orders.map((order: any) => addOrder(order)) // Call addOrder for each order in parallel
+                );
+
+                if (responses.every((response) => response)) {
+                    // If all responses are successful
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Orders have been successfully uploaded.",
+                        icon: "success",
+                    });
+                    setReload(true);
+                    setShowAddModal(false);
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Some orders failed to upload.",
+                        icon: "error",
+                    });
+                }
+            } else {
+                console.log("Upload canceled by user.");
             }
         } catch (error) {
+            Swal.fire({
+                title: "Error!",
+                text: "An error occurred while uploading orders.",
+                icon: "error",
+            });
             console.error("Error uploading orders:", error);
         }
     };
 
     return (
         <dialog id="add_order_modal" className="modal" open={showAddModal}>
-            <div className="modal-box w-11/12  ">
+            <div className="modal-box w-11/12 max-w-5xl">
                 <form method="dialog">
                     <button
                         type="button"
@@ -167,6 +217,7 @@ const AddOrdersModal = ({
                                                                 order.orderlist
                                                                     .length
                                                             }
+                                                            className="align-text-top"
                                                         >
                                                             {
                                                                 order.transaction_number
@@ -177,6 +228,7 @@ const AddOrdersModal = ({
                                                                 order.orderlist
                                                                     .length
                                                             }
+                                                            className="align-text-top"
                                                         >
                                                             {order.order_date}
                                                         </td>
@@ -185,6 +237,7 @@ const AddOrdersModal = ({
                                                                 order.orderlist
                                                                     .length
                                                             }
+                                                            className="align-text-top"
                                                         >
                                                             {order.order_type}
                                                         </td>
@@ -193,8 +246,18 @@ const AddOrdersModal = ({
                                                 <td>{item.category}</td>
                                                 <td>{item.product_name}</td>
                                                 <td>{item.quantity}</td>
-                                                <td>{item.price}</td>
-                                                <td>{item.sub_total}</td>
+                                                <td>
+                                                    Php{" "}
+                                                    {Number(item.price).toFixed(
+                                                        2
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    Php{" "}
+                                                    {Number(
+                                                        item.sub_total
+                                                    ).toFixed(2)}
+                                                </td>
                                             </tr>
                                         )
                                     )

@@ -27,6 +27,10 @@ const CategoriesPage = () => {
             cell: (info) => <p>{info.getValue()}</p>,
             header: () => <span>Category ID</span>,
         }),
+        columnHelper.accessor("category_image", {
+            cell: (info) => <img className="w-[18rem]" src={info.getValue()} />,
+            header: () => <span>Image</span>,
+        }),
         columnHelper.accessor("category_name", {
             cell: (info) => <p>{info.getValue()}</p>,
             header: () => <span>Category Name</span>,

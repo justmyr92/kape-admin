@@ -23,6 +23,7 @@ import {
     getProductsWithCategories,
 } from "../../services/products.service";
 import { authUser } from "../../services/auth.service";
+import SalesLineChart from "../../components/SalesLineChart";
 
 // Register the components to Chart.js
 ChartJS.register(
@@ -62,18 +63,18 @@ const DashboardPage = () => {
     console.log(storeID);
 
     const months = [
-        "January",
-        "February",
-        "March",
-        "April",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
         "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
     ];
 
     useEffect(() => {
@@ -124,7 +125,7 @@ const DashboardPage = () => {
             setMonthlySales(getMonthlySales(data)); // Assuming getMonthlySales accepts Order[] as well
             const salesData = setSalesData(data); // Updated sales data
             console.log(getMonthlySales(data), "ASd");
-
+            console.log(data, "asd");
             console.log(
                 calculatePercentageChanges(getMonthlySales(data)),
                 "ASd"
@@ -147,15 +148,12 @@ const DashboardPage = () => {
     // Function to calculate the percentage changes for monthly sales data
     const calculatePercentageChanges = (amounts: any) => {
         let percentages = [];
-
         // Start with "0%" for the first month (no previous month to compare)
         percentages.push("0%");
-
         // Loop through the sales data and calculate the percentage change for each month
         for (let i = 1; i < amounts.length; i++) {
             const currentValue = amounts[i];
             const previousValue = amounts[i - 1];
-
             // Handle edge case when previous value is 0
             if (previousValue === 0) {
                 if (currentValue === 0) {
@@ -222,9 +220,9 @@ const DashboardPage = () => {
                 salesByStore[storeId] = { dineIn: 0, takeOut: 0 };
             }
 
-            if (order.order_type === "dineIn") {
+            if (order.order_type === "Dine In") {
                 salesByStore[storeId].dineIn += amount;
-            } else if (order.order_type === "takeOut") {
+            } else if (order.order_type === "Take Out") {
                 salesByStore[storeId].takeOut += amount;
             }
         });
@@ -246,7 +244,7 @@ const DashboardPage = () => {
     };
 
     const pieChart = {
-        labels: ["Dine-In", "Take-Out"],
+        labels: ["Dine In", "Take Out"],
         datasets: [
             {
                 label: "Sales by Store",
@@ -334,7 +332,6 @@ const DashboardPage = () => {
                     )}
                 </div>
                 <div className="stats shadow mb-4 w-full">
-                    {/* Stat 1: Total Sales */}
                     <div className="stat">
                         <div className="stat-figure text-primary">
                             <svg
@@ -358,7 +355,6 @@ const DashboardPage = () => {
                         <div className="stat-desc">Items sold</div>
                     </div>
 
-                    {/* Stat 2: Total Products */}
                     <div className="stat">
                         <div className="stat-figure text-secondary">
                             <svg
@@ -382,7 +378,6 @@ const DashboardPage = () => {
                         <div className="stat-desc">Available products</div>
                     </div>
 
-                    {/* Stat 3: Total Sales Amount */}
                     <div className="stat">
                         <div className="stat-figure text-success">
                             <svg
@@ -406,7 +401,6 @@ const DashboardPage = () => {
                         <div className="stat-desc">Total revenue</div>
                     </div>
 
-                    {/* Stat 4: Total Categories */}
                     <div className="stat">
                         <div className="stat-figure text-warning">
                             <svg
@@ -484,12 +478,18 @@ const DashboardPage = () => {
                         </table>
                     </div>
                 </div>
-                <div className="flex mb-4">
+                <div className="flex mb-4 gap-2">
                     <div className="chart-container w-[100%] border border-amber-600 p-3 rounded-md">
                         <h2 className="text-xl mb-4 text-center">
                             Monthly Sales
                         </h2>
                         <Bar data={chartData} />
+                    </div>
+                    <div className="chart-container w-[100%] border border-amber-600 p-3 rounded-md">
+                        <h2 className="text-xl mb-4 text-center">
+                            Monthly Sales
+                        </h2>
+                        <SalesLineChart />
                     </div>
                 </div>
                 <div className="flex">

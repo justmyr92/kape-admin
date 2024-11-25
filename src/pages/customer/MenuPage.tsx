@@ -4,6 +4,7 @@ import { getTopSoldProducts } from "../../services/orders.service";
 import { Carousel } from "flowbite-react";
 import { getProductsWithCategoriesByType } from "../../services/products.service";
 import Footer from "../../components/Footer";
+import MealAndDrinkCategories from "../../components/MealAndDrinkCategories";
 
 interface ProductInterface {
     product_id: number;
@@ -18,8 +19,27 @@ interface ProductInterface {
 const MenuPage = () => {
     const [topProducts, setTopProducts] = useState<any[]>([]);
     const [meals, setMeals] = useState<ProductInterface[]>([]);
-
     const [drinks, setDrinks] = useState<ProductInterface[]>([]);
+    const [groupMealCategories, setGroupMealCategories] = useState<any[]>([]);
+    const [groupDrinksCategories, setGroupDrinksCategories] = useState<any[]>(
+        []
+    );
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(
+        null
+    );
+
+    function groupProductsByCategory(products: any[]) {
+        return products.reduce((grouped: any, product: any) => {
+            const category = product.category_name;
+            // Initialize the category group if it doesn't exist
+            if (!grouped[category]) {
+                grouped[category] = [];
+            }
+            // Push the product into the appropriate category group
+            grouped[category].push(product);
+            return grouped;
+        }, {});
+    }
 
     useEffect(() => {
         const fetchTopSoldProducts = async () => {
@@ -40,6 +60,9 @@ const MenuPage = () => {
             try {
                 const meal_res = await getProductsWithCategoriesByType("meal");
                 setMeals(meal_res);
+
+                setGroupMealCategories(groupProductsByCategory(meal_res));
+                console.log(groupProductsByCategory(meal_res), "hehe");
             } catch (error) {
                 console.error("Error fetching meals:", error);
             }
@@ -47,9 +70,12 @@ const MenuPage = () => {
         const fetchDrinks = async () => {
             try {
                 const drink_res = await getProductsWithCategoriesByType(
-                    "drink"
+                    "drinks"
                 );
                 setDrinks(drink_res);
+                setGroupDrinksCategories(groupProductsByCategory(drink_res));
+                groupProductsByCategory(drink_res);
+                console.log(groupDrinksCategories, "hehe");
             } catch (error) {
                 console.error("Error fetching meals:", error);
             }
@@ -62,28 +88,6 @@ const MenuPage = () => {
         <main>
             <Navbar />
 
-            {/* Carousel section for top products */}
-            {/* <section className="section__top_orders h-[80vh]">
-                <div className="container mx-auto flex flex-col justify-center items-center h-full px-1.5">
-                    <div className="flex flex-col justify-center items-center">
-                        <h2 className="text-3xl font-bold text-amber-900 uppercase title">
-                            Our Best Sellers
-                        </h2>
-                    </div>
-                    <Carousel className="h-[50%]">
-                        {topProducts.map((product: any, index: number) => (
-                            <div
-                                className="h-full justify-center items-center flex"
-                                key={index}
-                            >
-                                <h1 className="title sm:text-5xl text-2xl">
-                                    {product.product_name}
-                                </h1>
-                            </div>
-                        ))}
-                    </Carousel>
-                </div>
-            </section> */}
             <section
                 className="section__top_orders h-[80vh] bg-fixed bg-center bg-cover mt-[5rem]"
                 style={{
@@ -116,80 +120,15 @@ const MenuPage = () => {
             <section className="section__top_orders min-h-[100vh] py-10">
                 <div className="container mx-auto h-full px-1.5">
                     <div className="flex flex-col justify-center items-center">
-                        <h2 className="text-3xl font-bold text-amber-900 uppercase title">
+                        <h2 className="text-3xl font-bold text-amber-900 uppercase title mb-10">
                             Menu
                         </h2>
                     </div>
-                    <div className="flex flex-col justify-center mt-10 items-start">
-                        <h2 className="text-2xl font-bold text-amber-900 uppercase title">
-                            Meal
-                        </h2>
-                    </div>
 
-                    <div className="meals flex gap-10 py-4 w-full mb-5 overflow-auto">
-                        {meals.map((product: any) => (
-                            <div
-                                key={product.product_id}
-                                className="card bg-base-100 border shadow-3xl flex flex-col items-center"
-                            >
-                                <figure className="rounded-t-md px-3 py-2 h-60 w-60 flex justify-center items-center">
-                                    <img
-                                        src={product.product_image}
-                                        alt={product.product_name}
-                                        className="h-[90%] w-[90%] object-center object-contain rounded-full border-2 border-amber-950"
-                                    />
-                                </figure>
-                                <div className="card-body w-full text-white bg-amber-900 px-3 py-3 rounded-b-md flex flex-col justify-center items-center">
-                                    <h2 className="card-title title text-xl text-center">
-                                        {product.product_name}
-                                    </h2>
-                                    {/* Uncomment below if you want to include these fields */}
-                                    {/* 
-                <p className="text-center">{product.category_name}</p>
-                <p className="text-center text-base">
-                    Php {product.product_price}
-                </p> 
-                */}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="flex flex-col justify-center mt-10 items-start">
-                        <h2 className="text-2xl font-bold text-amber-900 uppercase title">
-                            Drinks
-                        </h2>
-                    </div>
-
-                    <div className="drinks flex gap-10 py-4 w-full mb-5 overflow-auto">
-                        {drinks.map((product: any) => (
-                            <div
-                                key={product.product_id}
-                                className="card bg-base-100 border shadow-3xl flex flex-col items-center"
-                            >
-                                <figure className="rounded-t-md px-3 py-2 h-60 w-60 flex justify-center items-center">
-                                    <img
-                                        src={
-                                            product.product_image // Replace with your actual default image path
-                                        }
-                                        alt={product.product_name}
-                                        className="h-[90%] w-[90%] object-center object-contain rounded-full border-2 border-amber-950"
-                                    />
-                                </figure>
-                                <div className="card-body w-full text-white bg-amber-900 px-3 py-3 rounded-b-md flex flex-col justify-center items-center">
-                                    <h2 className="card-title title text-xl text-center">
-                                        {product.product_name}
-                                    </h2>
-                                    {/* Uncomment below if you want to include these fields */}
-                                    {/* 
-                <p className="text-center">{product.category_name}</p>
-                <p className="text-center text-base">
-                    Php {product.product_price}
-                </p> 
-                */}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <MealAndDrinkCategories
+                        groupMealCategories={groupMealCategories}
+                        groupDrinksCategories={groupDrinksCategories}
+                    />
                 </div>
             </section>
             <Footer />

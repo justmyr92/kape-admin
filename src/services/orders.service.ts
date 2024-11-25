@@ -6,6 +6,7 @@ const getToken = () => localStorage.getItem("token"); // Adjust based on your to
 export const addOrder = async (orders: any) => {
     const token = getToken();
 
+    console.log(orders, "asdasdasdas");
     try {
         const response = await fetch(`${SERVER_URI}/add/order`, {
             method: "POST",
@@ -41,7 +42,7 @@ const addOrderList = async (order_id: any, order_list: any) => {
             order_id, // Add the order_id to each item
         }));
 
-        console.log(formattedOrderList);
+        console.log(order_list, "Asdasd");
 
         // Use Promise.all to send all fetch requests
         const responses = await Promise.all(

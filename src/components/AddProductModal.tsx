@@ -21,7 +21,8 @@ const AddProductModal = ({
     const [selectedCategory, setSelectedCategory] = useState<number | "others">(
         1
     ); // Default category ID set to 1
-    const [categoryName, setCategoryName] = useState(""); // State for custom category name
+    const [categoryName, setCategoryName] = useState("");
+    const [productType, setProductType] = useState("");
 
     // Reset form fields function
     const resetForm = () => {
@@ -31,6 +32,7 @@ const AddProductModal = ({
         setImagePreview(null); // Reset image preview
         setSelectedCategory(1); // Reset category to default
         setCategoryName(""); // Reset custom category name
+        setProductType("");
     };
 
     useEffect(() => {
@@ -66,6 +68,7 @@ const AddProductModal = ({
         formData.append("product_price", productPrice);
         formData.append("category_id", String(categoryId));
         formData.append("product_image", productImage);
+        formData.append("product_type", productType);
 
         try {
             const response = await addProduct(formData); // Adjusted for FormData
@@ -145,6 +148,21 @@ const AddProductModal = ({
                                 />
                             </div>
                         )}
+                    </label>
+                    <label className="form-control w-full mb-2">
+                        <div className="label">
+                            <span className="label-text">Type</span>
+                        </div>
+                        <select
+                            className="input input-bordered w-full rounded-md"
+                            value={productType}
+                            onChange={(e) => setProductType(e.target.value)}
+                        >
+                            <option value="meal" selected>
+                                Meal
+                            </option>
+                            <option value="drinks">Drinks</option>
+                        </select>
                     </label>
                     <label className="form-control w-full mb-2">
                         <div className="label">

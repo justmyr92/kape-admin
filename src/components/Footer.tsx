@@ -10,12 +10,16 @@ import {
 const Footer = () => {
     return (
         <footer className="bg-amber-800 text-white py-5">
-            <div className="container mx-auto flex h-full justify-between px-1.5">
-                <div className="logo__container w-[15%]">
-                    <img src={logo} alt={logo} className="rounded-full" />
+            <div className="container mx-auto flex h-full justify-between px-1.5 sm:flex-row flex-col">
+                <div className="logo__container sm:w-[15%] w-full flex justify-center mb-4">
+                    <img
+                        src={logo}
+                        alt={logo}
+                        className="rounded-full sm:w-full w-[15%]"
+                    />
                 </div>
-                <div className="footer__main__content flex flex-col items-center w-[85%] px-3.5 justify-center gap-5">
-                    <div className="links flex justify-center w-full gap-10 text-lg">
+                <div className="footer__main__content flex flex-col items-center sm:w-[85%] w-full px-3.5 justify-center gap-5">
+                    <div className="links flex justify-center w-full gap-10 sm:text-base text-sm">
                         <Link to="/home">
                             <h2 className="title">Home</h2>
                         </Link>
@@ -30,20 +34,20 @@ const Footer = () => {
                         </Link>
                     </div>
 
-                    <div className="links flex justify-center w-full gap-10 text-lg">
+                    <div className="links flex justify-center w-full gap-10 sm:text-base text-sm">
                         <FontAwesomeIcon
                             icon={faFacebook}
-                            className="text-white w-8 h-8"
+                            className="text-white sm:w-8 w-4 sm:h-8 h-4"
                         />
 
                         <FontAwesomeIcon
                             icon={faInstagram}
-                            className="text-white w-8 h-8"
+                            className="text-white sm:w-8 w-4 sm:h-8 h-4"
                         />
 
                         <FontAwesomeIcon
                             icon={faTiktok}
-                            className="text-white w-8 h-8"
+                            className="text-white sm:w-8 w-4 sm:h-8 h-4"
                         />
                     </div>
 

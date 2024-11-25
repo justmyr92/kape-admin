@@ -94,20 +94,29 @@ export const addProduct = async (formData: FormData) => {
     }
 };
 
-export const addCategory = async (category_name: string) => {
+export const addCategory = async (
+    categoryName: string,
+    categoryImage: File
+) => {
     const token = getToken();
     try {
+        // Create a FormData object to hold the data
+        const formData = new FormData();
+        formData.append("categoryName", categoryName);
+        formData.append("categoryImage", categoryImage); // Attach the image file
+
         const response = await fetch(`${SERVER_URI}/add/category`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                ...(token ? { jwt_token: token } : {}),
+                ...(token ? { jwt_token: token } : {}), // Include the JWT token if available
             },
-            body: JSON.stringify({ category_name }),
+            body: formData, // Send the FormData object as the request body
         });
+
         if (!response.ok) {
             throw new Error("Network response was not ok");
         }
+
         const categoryAdded = await response.json();
         return categoryAdded.category_id;
     } catch (error) {
